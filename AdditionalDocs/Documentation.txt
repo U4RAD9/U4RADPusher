@@ -1,0 +1,39 @@
+u4rad.bat
+- This is a batch script that runs the powershell script stored in Scripts as admin
+- It bypasses the ExecutionPolicy of the system it is being run on
+- After the Orthanc installation is finished, it will open a CMD tab which will close automatically after 5 seconds (it can be edited)
+- In order to create the exe, download bat2execonverter from this link https://bat-to-exe-converter-x64.en.download.it/ and open it (it is a GUI)
+- Create a x64 executable or x32 executable as needed 
+- This file should NOT be packaged in the pusher zip file, only the EXE is required and the Scripts folder
+- Keep this file somewhere safe
+
+Scripts Folder
+
+orthanc.exe
+- This will be the orthanc installer
+- Include the 32bit installer or the 64 bit installer as needed
+- ALWAYS make sure that it is renamed to orthanc.exe
+
+u4rad.ps1
+- This is a powershell script
+- $PSScriptRoot is the directory of the powershell script
+- It creates a new JSON object that needs to be stored in the file orthanc.json
+- Ensure that NOTHING is missing from this list (additional configuration can be added as needed)
+- It writes this JSON object to orthanc.json in Program Files/Orthanc Server/Configuration/orthanc.json
+- It places routing.lua in the configuration folder as well
+- It then stops the orthanc service
+- It edits a registry value which makes logs verbose (see Set-itemProperty function at the end of the file)
+- It then starts the service again
+- IMPORTANT: if you are not able to access orthanc on localhost:8042, go to services in the windows menu and manually restart the orthanc service
+
+routing.lua
+- This is an autorouting script that automatically sends any received instance from the client's local orthanc to the cloud orthanc
+- It transcodes the file to JPEG-Lossless, in case the transfer syntax is to be changed, use any of the official dicom transfer syntaxes
+- This file needs to be packaged with the pusher (it will be in the Scripts folder in the pusher zip file)
+
+
+Things to do
+- Get a certificate (look up how to digitally sign an exe) after final changes to the exe are done
+- Use this certificate to verify the exe
+- Test on x32 bit systems
+
