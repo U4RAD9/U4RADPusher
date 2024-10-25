@@ -43,7 +43,7 @@ $orthanc = @{
     DicomCheckCalledAet = $false
     DicomPort = 4242
     DefaultEncoding = 'Latin1'
-    AcceptedTransferSyntaxes = @('1.2.840.1.0008.1.*')
+    AcceptedTransferSyntaxes = @('1.2.840.1.0008.1.*', '1.2.840.10008.1.2', '1.2.840.10008.1.2.1', '1.2.840.10008.1.2.2')
     UnknownSopClassAccepted = $false
     DicomScpTimeout = 30
     RemoteAccessAllowed = $true
@@ -140,6 +140,21 @@ if ($service.Status -eq 'Running') {
 Set-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Orthanc\Orthanc Server" -Name "Verbose" -Value 1
 
 Start-Service -Name $serviceName
+
+# Script to add the inbound rules on the system -- Himanshu.
+# Add inbound firewall rules for Orthanc
+$portHttp = 8042
+$portDicom = 4242
+
+# HTTP Inbound Rule
+New-NetFirewallRule -DisplayName "Orthanc HTTP" -Direction Inbound -Protocol TCP -LocalPort $portHttp -Action Allow -Profile Any
+
+# DICOM Inbound Rule
+New-NetFirewallRule -DisplayName "Orthanc DICOM" -Direction Inbound -Protocol TCP -LocalPort $portDicom -Action Allow -Profile Any
+
+Write-Host "Inbound firewall rules for Orthanc have been added."
+
+# End of Inbound rule logic.
 
 $service = Get-Service -Name $serviceName
 Write-Host 'Installation Finished'
